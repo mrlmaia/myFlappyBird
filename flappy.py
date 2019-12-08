@@ -52,7 +52,7 @@ class Bird(pygame.sprite.Sprite):
 
 class Ground(pygame.sprite.Sprite):
 
-    def __init__(self, width, heigth, xpos):
+    def __init__(self, xpos):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load("assets/base.png")
@@ -60,7 +60,7 @@ class Ground(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         self.rect[X] = xpos
-        self.rect[Y] = SCREEN_HEIGTH - heigth
+        self.rect[Y] = SCREEN_HEIGTH - GROUND_HEIGHT
 
     def update(self):
         # Eixo X 
@@ -85,7 +85,7 @@ bird_group.add(bird)
 
 ground_group = pygame.sprite.Group()
 for i in range(2):
-    ground = Ground(2 * SCREEN_WIDTH, 100, i * 2 * SCREEN_WIDTH)
+    ground = Ground(i * GROUND_WIDTH)
     ground_group.add(ground)
 
 clock = pygame.time.Clock()
@@ -109,7 +109,7 @@ while True:
     if is_off_screen(ground_group.sprites()[0]):
         ground_group.remove(ground_group.sprites()[0])
 
-        new_ground = Ground(2 * SCREEN_WIDTH)
+        new_ground = Ground(GROUND_WIDTH - 20)
         ground_group.add(new_ground)
 
     bird_group.update()
