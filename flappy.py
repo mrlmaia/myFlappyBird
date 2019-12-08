@@ -6,6 +6,11 @@ SCREEN_HEIGTH = 600
 SPEED = 10
 GRAVITY = 1
 GAME_SPEED = 10
+X = 0
+Y = 1
+
+GROUND_WIDTH = 2 * SCREEN_WIDTH
+GROUND_HEIGHT = 100
 
 class Bird(pygame.sprite.Sprite):
 
@@ -47,19 +52,22 @@ class Bird(pygame.sprite.Sprite):
 
 class Ground(pygame.sprite.Sprite):
 
-    def __init__(self, width, heigth):
+    def __init__(self, width, heigth, xpos):
         pygame.sprite.Sprite.__init__(self)
         
-        self.image = pygame.image.load("assets/gameover.png")
-        self.image = pygame.transform.scale(self.image, (width, heigth))
+        self.image = pygame.image.load("assets/base.png")
+        self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
 
         self.rect = self.image.get_rect()
-        self.rect[1] = SCREEN_HEIGTH - heigth
+        self.rect[X] = xpos
+        self.rect[Y] = SCREEN_HEIGTH - heigth
 
     def update(self):
         # Eixo X 
-        self.rect[0] -= GAME_SPEED
+        self.rect[X] -= GAME_SPEED
 
+def is_off_screen(sprite):
+    return sprite.rect[X] < - (sprite.rect[2])
 
 pygame.init()
 
@@ -76,8 +84,9 @@ bird = Bird()
 bird_group.add(bird)
 
 ground_group = pygame.sprite.Group()
-ground = Ground(2 * SCREEN_WIDTH, 100)
-ground_group.add(ground)
+for i in range(2):
+    ground = Ground(2 * SCREEN_WIDTH, 100, i * 2 * SCREEN_WIDTH)
+    ground_group.add(ground)
 
 clock = pygame.time.Clock()
 
@@ -96,6 +105,12 @@ while True:
         
     # For each frame blit background
     screen.blit(BACKGROUND, (0,0))
+
+    if is_off_screen(ground_group.sprites()[0]):
+        ground_group.remove(ground_group.sprites()[0])
+
+        new_ground = Ground(2 * SCREEN_WIDTH)
+        ground_group.add(new_ground)
 
     bird_group.update()
     ground_group.update()
